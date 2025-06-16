@@ -6,7 +6,7 @@ services:
         networks:
             - br-network
         environment:
-            MYSQL_DATABASE: appdb
+            MYSQL_DATABASE: maindb
             MYSQL_USER: sezer
             MYSQL_PASSWORD: birikiuc123!
             MYSQL_ROOT_PASSWORD: birikiuc123!
@@ -29,7 +29,7 @@ services:
             - 8080:80
         environment:
             WORDPRESS_DB_HOST: mysql_service
-            WORDPRESS_DB_NAME: appdb
+            WORDPRESS_DB_NAME: maindb 
             WORDPRESS_DB_USER: sezer
             WORDPRESS_DB_PASSWORD: birikiuc123!
         networks:
@@ -50,6 +50,25 @@ services:
             - br-network    
 
 
+    drupal:
+
+        image: drupal
+        depends_on:
+            - mysql_service
+        volumes:
+            - /var/www/html/sites    
+            - /var/www/html/profiles  
+            - /var/www/html/themes    
+            - /var/www/private
+        environment:
+            MYSQL_DATABASE: maindb
+            MYSQL_USER: sezer
+            MYSQL_PASSWORD: birikiuc123!
+        networks:
+            - br-network
+        ports:
+            - 6080:80    
+        restart: always        
 
 
 
