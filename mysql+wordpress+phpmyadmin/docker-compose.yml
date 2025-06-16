@@ -1,0 +1,60 @@
+services:
+    mysql_service:
+        image: mysql
+        volumes:
+            - db_data:/var/lib/mysql
+        networks:
+            - br-network
+        environment:
+            MYSQL_DATABASE: appdb
+            MYSQL_USER: sezer
+            MYSQL_PASSWORD: birikiuc123!
+            MYSQL_ROOT_PASSWORD: birikiuc123!
+
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pbirikiuc123!"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s 
+        restart: always
+    wordpress:
+        image: wordpress
+        depends_on:
+            mysql_service:
+                condition: service_healthy
+        volumes:
+            - wordpress_volume:/var/www/html
+        ports:
+            - 8080:80
+        environment:
+            WORDPRESS_DB_HOST: mysql_service
+            WORDPRESS_DB_NAME: appdb
+            WORDPRESS_DB_USER: sezer
+            WORDPRESS_DB_PASSWORD: birikiuc123!
+        networks:
+            - br-network
+        restart : always    
+
+    phpmayadmin:
+        image: phpmyadmin/phpmyadmin
+        depends_on:
+            - mysql_service
+        ports:
+            - 7080:80
+        restart: always
+        environment:
+            PMA_HOST: mysql_service
+            MYSQL_ROOT_PASSWORD: birikiuc123!
+        networks:
+            - br-network    
+
+
+
+
+
+volumes:
+    db_data:
+    wordpress_volume:
+networks:
+    br-network:    
